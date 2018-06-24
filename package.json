@@ -1,0 +1,15 @@
+{
+  "name": "processing-template",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./src/sketch.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "parcel ./src/index.html"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "p5": "^0.6.1"
+  }
+}
