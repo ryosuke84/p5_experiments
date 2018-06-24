@@ -13,7 +13,7 @@ class Obstacle {
 
         p5.push();
         p5.stroke(0);
-        p5.fill(175);
+        p5.fill(p5.color(146,138,151));
         p5.rect(this.x, this.y, this.w, this.h);
         p5.pop();
     }

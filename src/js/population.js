@@ -2,7 +2,7 @@ import DNA from './dna.js';
 import Rocket from './rocket.js';
 
 class Population {
-    constructor(renderer, num, lifetime, target, obstacle) {
+    constructor(renderer, num, lifetime, target, obstacle, fitnessFunction) {
         this.renderer = renderer;
         const p5 = this.renderer;
 
@@ -12,12 +12,13 @@ class Population {
         this.lifetime = lifetime;
         this.target = target;
         this.obstacle = obstacle;
+        this.fitnessFunction = fitnessFunction;
 
         this.continue = true;
         this.currentGeneration = 0;
 
         for (let i = 0; i < this.num; i++) {
-            this.population.push(new Rocket(p5, p5.width / 2, p5.height - 30, new DNA(p5, { lifetime: this.lifetime })))
+            this.population.push(new Rocket(p5, p5.width / 2, p5.height - 30, new DNA(p5, { lifetime: this.lifetime }), {fitnessFunction: this.fitnessFunction}))
         }
 
     }
@@ -25,8 +26,8 @@ class Population {
     createMatingPool() {
         this.matingPool = [];
         for (const p of this.population) {
-            const fitness = p.fitness(this.target.location) * 1000;
-            // console.log(fitness)
+            const fitness = p.fitness(this.target) * 100;
+            // console.log('Number in mating pool: ' + fitness)
             for (let i = 0; i < fitness; i++) {
                 this.matingPool.push(p);
             }
@@ -56,7 +57,7 @@ class Population {
             // console.log(second)
             // console.log(child)
             // }
-            const newRocket = new Rocket(p5, p5.width / 2, p5.height - 30, child);
+            const newRocket = new Rocket(p5, p5.width / 2, p5.height - 30, child, {fitnessFunction: this.fitnessFunction});
             newGen.push(newRocket);
         }
 

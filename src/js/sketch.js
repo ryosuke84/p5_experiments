@@ -1,9 +1,7 @@
 import p5 from 'p5';
 import 'p5/lib/addons/p5.dom';
-import Vehicle from './vehicle.js';
 import Target from './target.js';
 import Obstacle from './obstacle.js';
-import Rocket from './rocket.js';
 import Population from './population.js';
 
 const sketch = p5 => {
@@ -12,7 +10,8 @@ const sketch = p5 => {
   let target;
   let obstacle;
   let rocketPop;
-  let rocket;
+  let rocketPop2;
+  let rocketPop3;
   let lifeCount;
   let lifeTime;
   let currentGeneration;
@@ -20,7 +19,7 @@ const sketch = p5 => {
   p5.setup = () => {
     canvas = p5.createCanvas(700, 600);
     canvas.style('border', 'solid 1px');
-    p5.background(255);
+    p5.background(p5.color(251,232,211));
 
 
     lifeCount = 0;
@@ -28,12 +27,14 @@ const sketch = p5 => {
     currentGeneration = 0;
 
     target = new Target(p5, p5.width / 2, 100);
-    obstacle = new Obstacle(p5, 250, 300, 200, 20);
-    rocketPop = new Population(p5, 150, lifeTime, target, obstacle);
+    obstacle = new Obstacle(p5, 150, 300, 400, 20);
+    // rocketPop = new Population(p5, 150, lifeTime, target, obstacle, 1);
+    // rocketPop2 = new Population(p5, 150, lifeTime, target, obstacle, 2);
+    rocketPop3 = new Population(p5, 150, lifeTime, target, obstacle, 3);
   };
 
   p5.draw = () => {
-    p5.background(255);
+    p5.background(p5.color(251,232,211));
 
     target.display();
     obstacle.display();
@@ -43,7 +44,7 @@ const sketch = p5 => {
     p5.text('Current Generation: ' + currentGeneration, 40, 40)
     p5.textSize(10);
     p5.text('Life countdown: ' + (lifeTime - lifeCount), 40, 60)
-    p5.text('Mating pool: ' + (rocketPop.matingPool.length), 40, 80)
+    // p5.text('Mating pool: ' + (rocketPop.matingPool.length), 40, 80)
     p5.pop();
 
 
@@ -51,15 +52,21 @@ const sketch = p5 => {
 
     if (lifeCount < lifeTime) {
       //console.log(lifeCount)
-      rocketPop.live();
+      // rocketPop.live();
+      // rocketPop2.live();
+      rocketPop3.live();
       lifeCount++;
     } else {
 
       lifeCount = 0;
       currentGeneration++;
-      rocketPop.createMatingPool();
+      // rocketPop.createMatingPool();
+      // rocketPop2.createMatingPool();
+      rocketPop3.createMatingPool();
       // console.log('Mating pool: ' + rocketPop.matingPool.length);
-      rocketPop.reproduce();
+      // rocketPop.reproduce();
+      // rocketPop2.reproduce();
+      rocketPop3.reproduce();
     }
 
   };
