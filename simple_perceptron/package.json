@@ -5,7 +5,7 @@
   "main": "./src/sketch.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "smart_rockets": "parcel ./smart_rockets/src/smart_rockets.html --no-hmr --no-cache",
+    "dev": "parcel ./index.html --no-hmr --no-cache",
     "simple_perceptron": "parcel ./simple_perceptron/index.html --no-hmr --no-cache"
   },
   "author": "",
