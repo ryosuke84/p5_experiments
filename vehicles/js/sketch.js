@@ -35,7 +35,7 @@ const sketch = p5 => {
     
     // vehicle.applyRightTorque(p5.createVector(0.01,0));
     vehicle.display();
-
+    vehicle.displayDebug(emitter);
     // console.log(vehicle.velocity)
 
   };
