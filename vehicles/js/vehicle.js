@@ -1,5 +1,3 @@
-
-
 class Vehicle {
     constructor(render, x, y){
         this.render = render;
@@ -12,12 +10,12 @@ class Vehicle {
 
         this.leftSensor = {
             xOffset: 5,
-            yOffset: -25
+            yOffset: 25
         }
 
         this.rightSensor = {
             xOffset: 35,
-            yOffset: -25
+            yOffset: 25
         }
     }
 
@@ -45,24 +43,62 @@ class Vehicle {
     displayDebug(emitter) {
         const p5  = this.render;
 
-        // const startX = this.location.x + 5 + 20 * (p5.sin(-this.velocity.heading() + p5.PI/2));
-        // const startY = this.location.y + 5 + 20 * (p5.cos(-this.velocity.heading() + p5.PI/2));
-        const point = this.getLeftSensorPos();
-        // point.rotate(this.velocity.heading() + p5.PI/2)
+
+        p5.push()
+        p5.stroke('red')
+
+        const dir = this.direction.copy();
+        dir.setMag(20)
+        p5.translate(40, 40)
+        p5.line(0, 0, dir.x, dir.y);
+        p5.ellipse(dir.x,dir.y, 5,5)
+        p5.pop()
+
+        p5.push()
+        p5.stroke('green')
+        const vel = p5.createVector(
+            (40 + this.leftSensor.yOffset * (p5.cos(this.direction.heading().toFixed(2)))),
+            (40 + this.leftSensor.yOffset * (p5.sin(this.direction.heading().toFixed(2))))
+        )
+        
+        vel.setMag(25)
+        // p5.translate(40, 40)
+        p5.line(0 +40 , 0+40, vel.x, vel.y);
+        p5.ellipse(vel.x,vel.y, 5,5)
+        p5.pop()
+
+        p5.push()
+        p5.stroke('blue')
+        const sens = this.direction.copy();
+        sens.setMag(20)
+        p5.translate(40, 40)
+        p5.line(0, 0, sens.x, sens.y);
+        p5.ellipse(sens.x,sens.y, 5,5)
+        p5.pop()
+
+        this._displaySensorDebug(this.getLeftSensorPos(), emitter);
+        this._displaySensorDebug(this.getRightSensorPos(), emitter);
+
+    }
+
+    _displaySensorDebug(sensor, emitter) {
+        const p5  = this.render;
+
+        const startX = sensor.x;
+        const startY = sensor.y;
+
         const endX = emitter.location.x;
         const endY = emitter.location.y;
 
-        // const middleX = (startX + endX)/2;
-        // const middleY = (startY, endY)/2;
+        const middleX = (startX + endX)/2;
+        const middleY = (startY + endY)/2;
 
         p5.push();
-        p5.stroke(0)
-        // p5.translate(this.location.x, this.location.y);
-        // p5.rotate(this.velocity.heading() + p5.PI/2);
-        // p5.ellipse(point.x, point.y, 5,5);
-        p5.line(point.x,point.y, endX, endY);
+        p5.stroke(0);
+        p5.line(startX, startY, endX, endY);
+        p5.ellipse(startX,startY, 5,5)
+        p5.ellipse(middleX,middleY, 5,5)
         p5.pop();
-
     }
 
     update() {
@@ -115,14 +151,19 @@ class Vehicle {
     getLeftSensorPos() {
         const p5 = this.render;
         const pos = p5.createVector(
-            this.location.x + 5 + 20 * (p5.sin(-this.velocity.heading() + p5.PI/2)),
-            this.location.y + 5 + 20 * (p5.cos(-this.velocity.heading() + p5.PI/2))
+            this.location.x  + (this.leftSensor.yOffset * (p5.cos(this.direction.heading().toFixed(2)))),
+            this.location.y + 5  + (this.leftSensor.yOffset * (p5.sin(this.direction.heading().toFixed(2))))
         );
         return pos;
     }
 
     getRightSensorPos() {
-        
+        const p5 = this.render;
+        const pos = p5.createVector(
+            this.location.x  + (this.leftSensor.yOffset * (p5.cos(this.direction.heading().toFixed(2)))),
+            this.location.y + 35  + (this.leftSensor.yOffset * (p5.sin(this.direction.heading().toFixed(2))))
+        );
+        return pos;
     }
 }
 
