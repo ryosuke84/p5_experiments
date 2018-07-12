@@ -15,7 +15,7 @@ const sketch = p5 => {
     canvas.style('border', 'solid 1px');
     p5.background(255);
 
-    vehicle = new Vehicle(p5, 0, p5.height/2);
+    vehicle = new Vehicle(p5, 30, p5.height/2);
     emitter = new Emitter(p5, p5.width/2, p5.height/2);
   };
 
@@ -25,8 +25,10 @@ const sketch = p5 => {
     emitter.display();
 
     if(p5.mouseIsPressed) {
-      vehicle.applyLeftTorque(p5.createVector(p5.random(0,5),0));
-      vehicle.applyRightTorque(p5.createVector(p5.random(0,5),0));
+      vehicle.applyTorque(p5.createVector(5,0),p5.createVector(5,0))
+      // vehicle.applyLeftTorque(p5.createVector(5,0));
+      // vehicle.applyRightTorque(p5.createVector(5,0));
+      // console.log(vehicle.direction)
     }
 
     // vehicle.applyForce(p5.createVector(0.07,0));

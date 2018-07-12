@@ -43,6 +43,10 @@ class Vehicle {
     displayDebug(emitter) {
         const p5  = this.render;
 
+        p5.push()
+        p5.stroke(0)
+        p5.line(0, p5.height/2, p5.width, p5.height/2)
+        p5.pop()
 
         p5.push()
         p5.stroke('red')
@@ -54,27 +58,7 @@ class Vehicle {
         p5.ellipse(dir.x,dir.y, 5,5)
         p5.pop()
 
-        p5.push()
-        p5.stroke('green')
-        const vel = p5.createVector(
-            (40 + this.leftSensor.yOffset * (p5.cos(this.direction.heading().toFixed(2)))),
-            (40 + this.leftSensor.yOffset * (p5.sin(this.direction.heading().toFixed(2))))
-        )
-        
-        vel.setMag(25)
-        // p5.translate(40, 40)
-        p5.line(0 +40 , 0+40, vel.x, vel.y);
-        p5.ellipse(vel.x,vel.y, 5,5)
-        p5.pop()
-
-        p5.push()
-        p5.stroke('blue')
-        const sens = this.direction.copy();
-        sens.setMag(20)
-        p5.translate(40, 40)
-        p5.line(0, 0, sens.x, sens.y);
-        p5.ellipse(sens.x,sens.y, 5,5)
-        p5.pop()
+       
 
         this._displaySensorDebug(this.getLeftSensorPos(), emitter);
         this._displaySensorDebug(this.getRightSensorPos(), emitter);
@@ -103,6 +87,7 @@ class Vehicle {
 
     update() {
         this.velocity.add(this.acceleration);
+        // console.log(this.acceleration)
         this.location.add(this.velocity);
 
         this.velocity.limit(3)
@@ -113,12 +98,37 @@ class Vehicle {
     }
 
     applyForce(force) {
-        const mag = force.mag();
+        const mag = force;
+        console.log(mag)
         const realForce = this.direction.copy();
+        // console.log(this.direction.heading())
+        // console.log(realForce)
+        // console.log(this.direction)
         realForce.setMag(mag);
-
+        // console.log(realForce)
         this.acceleration.add(realForce);
     }
+
+    applyTorque(leftForce, rightForce) {
+        const p5 = this.render;
+
+        let leftTorque = leftForce.mag().toFixed(2);
+        leftTorque = p5.constrain(leftTorque, 0, 180);
+
+        let rightTorque = rightForce.mag().toFixed(2);
+        rightTorque = p5.constrain(rightTorque, 0, 180);
+
+        const totalAngle = p5.radians(leftTorque - rightTorque);
+        // console.log('totalAngle: ' + totalAngle)
+        // console.log('before rotation: ' + this.direction)
+        this.direction.rotate(totalAngle);
+        // console.log('after rotation: ' + this.direction)
+
+        this.applyForce(leftTorque + rightTorque);
+
+
+    }
+
 
     applyLeftTorque(force) {
         const p5 = this.render;
@@ -126,11 +136,11 @@ class Vehicle {
 
         let torque = force.mag();
         torque = p5.constrain(torque, 0, 180);
-
+        console.log('left: ' + torque)
         torque = p5.radians(torque);
-
+        // console.log(this.direction)
         this.direction.rotate(torque)
-
+        // console.log(this.direction)
         this.applyForce(force);
         
     }
@@ -141,7 +151,7 @@ class Vehicle {
 
         let torque = force.mag();
         torque = p5.constrain(torque, 0, 180);
-
+        // console.log('right: ' + torque)
         torque = p5.radians(torque);
 
         this.direction.rotate(-torque)
@@ -151,10 +161,21 @@ class Vehicle {
     getLeftSensorPos() {
         const p5 = this.render;
         const pos = p5.createVector(
-            this.location.x  + (this.leftSensor.yOffset * (p5.cos(this.direction.heading().toFixed(2)))),
-            this.location.y + 5  + (this.leftSensor.yOffset * (p5.sin(this.direction.heading().toFixed(2))))
+            this.location.x  + 5,
+            this.location.y -20
         );
-        return pos;
+
+        // console.log(pos)
+        
+        const angle = p5.PI/2 ;
+
+        const newPos = p5.createVector();
+        newPos.x = pos.x*p5.cos(angle) + pos.y*p5.sin(angle);
+        newPos.y = -pos.x*p5.sin(angle) + pos.y*p5.cos(angle);
+
+        // console.log(pos)
+        // console.log(newPos)
+        return newPos;
     }
 
     getRightSensorPos() {
