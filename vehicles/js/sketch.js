@@ -11,11 +11,11 @@ const sketch = p5 => {
   let emitter;
   
   p5.setup = () => {
-    canvas = p5.createCanvas(700, 600);
+    canvas = p5.createCanvas(1500, 700);
     canvas.style('border', 'solid 1px');
     p5.background(255);
 
-    vehicle = new Vehicle(p5, 30, p5.height/2);
+    vehicle = new Vehicle(p5, -100, p5.height/2);
     emitter = new Emitter(p5, p5.width/2, p5.height/2);
   };
 
@@ -25,7 +25,9 @@ const sketch = p5 => {
     emitter.display();
 
     if(p5.mouseIsPressed) {
-      vehicle.applyTorque(p5.createVector(5,0),p5.createVector(5,0))
+      const activations =  vehicle.sense(emitter);
+      console.log(activations)
+      vehicle.applyTorque(activations[1], activations[0]);
       // vehicle.applyLeftTorque(p5.createVector(5,0));
       // vehicle.applyRightTorque(p5.createVector(5,0));
       // console.log(vehicle.direction)
