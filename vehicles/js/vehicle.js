@@ -6,9 +6,13 @@ class Vehicle {
 
         const p5 =  this.render;
         this.location = p5.createVector(x, y);
-        this.velocity = p5.createVector(0,0);
+        this.velocity = p5.createVector();
         this.acceleration = p5.createVector();
-        this.direction = p5.createVector(1,0);
+        this.direction = Vector.random2D();
+
+        this.maxSpeed = 5;
+        this.maxTorque = 3;
+
 
         this.leftSensor = {
             xOffset: 5,
@@ -123,17 +127,33 @@ class Vehicle {
         // rightTorque = p5.constrain(rightTorque, 0, 10);
 
 
-        const diff = (leftTorque-rightTorque)/2
-        console.log(leftTorque-rightTorque)
-        console.log(diff)
-        const totalAngle = p5.radians(diff);
+        let diff = (leftTorque-rightTorque)*2
+        // console.log(diff)
+        
+        let totalAngle = p5.constrain(diff, -this.maxTorque, this.maxTorque);
+        // console.log('angle: ' +  totalAngle);
+        totalAngle = p5.radians(totalAngle);
+        // console.log('radians: ' + totalAngle)
+
         // console.log('totalAngle: ' + totalAngle)
         // console.log('before rotation: ' + this.direction)
         this.direction.rotate(totalAngle);
         // console.log('after rotation: ' + this.direction)
 
-        const magnitude = p5.constrain(leftTorque+rightTorque,0,10)
-        this.applyForce(1);
+        //Calculate the resulting "push"
+        let absDiff = p5.abs(leftTorque-rightTorque);
+        console.log('absDiff: ' + absDiff);
+        // absDiff = p5.constrain(absDiff, 0, 60);
+        absDiff = p5.map(absDiff, 0, 30, 5, 0.1, true);
+        console.log('speed: ' + absDiff);
+
+
+        // let torqueSum = leftTorque+rightTorque;
+        // torqueSum = p5.constrain(torqueSum, 0, 10);
+        // console.log('torqueSum: ' + torqueSum)
+        // const magnitude = absDiff*(1/torqueSum)
+        // console.log('speed: ' + magnitude);
+        this.applyForce(absDiff);
 
 
     }
@@ -162,8 +182,11 @@ class Vehicle {
     }
 
     _sensorActivation(sensor, emitter){
+        const p5 =  this.render;
+
         const dist  = Vector.dist(sensor, emitter.location);
-        const activation = 500-dist;
+
+        const activation = p5.map(dist, p5.width/2, 0, 0.1 ,p5.width/2, true);
         return activation;
     }
 
@@ -174,6 +197,15 @@ class Vehicle {
         // console.log(activations)
         return activations;
 
+    }
+
+    run(emitter) {
+        const activations =  this.sense(emitter);
+
+        this.applyTorque(activations[1], activations[0]);
+        this.update();
+        this.display();
+        this.displayDebug(emitter);
     }
 }
 

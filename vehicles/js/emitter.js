@@ -11,7 +11,7 @@ class Emitter {
 
         p5.stroke(0);
         p5.fill(175);
-        p5.ellipse(this.location.x, this.location.y, 30, 30);
+        p5.ellipse(this.location.x, this.location.y, 10, 10);
     }
 };
 
