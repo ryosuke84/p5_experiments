@@ -6,12 +6,12 @@ class Vehicle {
 
         const p5 =  this.render;
         this.location = p5.createVector(x, y);
-        this.velocity = p5.createVector();
+        this.velocity = p5.createVector(1,0);
         this.acceleration = p5.createVector();
         this.direction = Vector.random2D();
 
-        this.maxSpeed = 5;
-        this.maxTorque = 3;
+        this.maxSpeed = 7;
+        this.maxSteer = 0.3;
 
 
         this.leftSensor = {
@@ -57,7 +57,7 @@ class Vehicle {
         p5.push()
         p5.stroke('red')
 
-        const dir = this.direction.copy();
+        const dir = this.velocity.copy();
         dir.setMag(20)
         p5.translate(40, 40)
         p5.line(0, 0, dir.x, dir.y);
@@ -95,38 +95,15 @@ class Vehicle {
 
     update() {
         this.velocity.add(this.acceleration);
-        // console.log(this.acceleration)
         this.location.add(this.velocity);
 
         this.velocity.limit(10)
-        //Adding some friction
-        this.velocity.mult(0.97);
 
         this.acceleration.mult(0);
     }
 
-    // applyForce(force) {
-    //     const mag = force;
-    //     // console.log(mag)
-    //     const realForce = this.direction.copy();
-    //     // console.log(this.direction.heading())
-    //     // console.log(realForce)
-    //     // console.log(this.direction)
-    //     realForce.setMag(mag);
-    //     // console.log(realForce)
-    //     this.acceleration.add(realForce);
-    // }
-
     applyForce(force) {
-        const mag = force;
-        // console.log(mag)
-        const realForce = this.direction.copy();
-        // console.log(this.direction.heading())
-        // console.log(realForce)
-        // console.log(this.direction)
-        realForce.setMag(mag);
-        // console.log(realForce)
-        this.acceleration.add(realForce);
+        this.acceleration.add(force);
     }
 
 
@@ -135,17 +112,21 @@ class Vehicle {
 
         const activations =  this.sense(target);
 
-        let diff = (activations[0] - activations[1])*2;
+        let diff = (activations[1] - activations[0])*2;
         let steerAngle = p5.radians(diff);
+        // console.log('steerAngele: ' + steerAngle)
 
-        const desiderd = this.velocity.copy();
+        const desidered = this.velocity.copy();
         desidered.rotate(steerAngle);
         desidered.normalize();
-        //TODO: applicare il vero modulo della forza
-        desiderd.mult(3);
         
-        const steer = Vector.sub(desiderd, velocity);
-        steer.limit(0.5);
+        let activationMean = (activations[0] + activations[1])/2;
+        activationMean = p5.map(activationMean, 0.1, p5.width/2, 0.1, this.maxSpeed);
+        // desidered.mult(this.maxSpeed);
+        desidered.mult(activationMean);
+        
+        const steer = Vector.sub(desidered, this.velocity);
+        steer.limit(this.maxSteer);
 
         this.applyForce(steer);
     }
@@ -198,7 +179,7 @@ class Vehicle {
             this.location.x  + sensor.xOffset,
             this.location.y + sensor.yOffset
         );
-        const angle = this.direction.heading() + p5.PI/2 ;
+        const angle = this.velocity.heading() + p5.PI/2 ;
 
         const newPos = p5.createVector();
         newPos.x = p5.cos(angle)*(pos.x - this.location.x) - p5.sin(angle)*(pos.y - this.location.y) + this.location.x;
@@ -233,9 +214,10 @@ class Vehicle {
     }
 
     run(emitter) {
-        const activations =  this.sense(emitter);
+        // const activations =  this.sense(emitter);
 
-        this.applyTorque(activations[1], activations[0]);
+        // this.applyTorque(activations[1], activations[0]);
+        this.steer(emitter);
         this.update();
         this.display();
         this.displayDebug(emitter);
