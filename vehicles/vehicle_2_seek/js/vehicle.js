@@ -98,12 +98,24 @@ class Vehicle {
         // console.log(this.acceleration)
         this.location.add(this.velocity);
 
-        this.velocity.limit(3)
+        this.velocity.limit(10)
         //Adding some friction
         this.velocity.mult(0.97);
 
         this.acceleration.mult(0);
     }
+
+    // applyForce(force) {
+    //     const mag = force;
+    //     // console.log(mag)
+    //     const realForce = this.direction.copy();
+    //     // console.log(this.direction.heading())
+    //     // console.log(realForce)
+    //     // console.log(this.direction)
+    //     realForce.setMag(mag);
+    //     // console.log(realForce)
+    //     this.acceleration.add(realForce);
+    // }
 
     applyForce(force) {
         const mag = force;
@@ -115,6 +127,27 @@ class Vehicle {
         realForce.setMag(mag);
         // console.log(realForce)
         this.acceleration.add(realForce);
+    }
+
+
+    steer(target) {
+        const p5 = this.render;
+
+        const activations =  this.sense(target);
+
+        let diff = (activations[0] - activations[1])*2;
+        let steerAngle = p5.radians(diff);
+
+        const desiderd = this.velocity.copy();
+        desidered.rotate(steerAngle);
+        desidered.normalize();
+        //TODO: applicare il vero modulo della forza
+        desiderd.mult(3);
+        
+        const steer = Vector.sub(desiderd, velocity);
+        steer.limit(0.5);
+
+        this.applyForce(steer);
     }
 
     applyTorque(leftForce, rightForce) {
@@ -144,7 +177,7 @@ class Vehicle {
         let absDiff = p5.abs(leftTorque-rightTorque);
         console.log('absDiff: ' + absDiff);
         // absDiff = p5.constrain(absDiff, 0, 60);
-        absDiff = p5.map(absDiff, 0, 30, 5, 0.1, true);
+        absDiff = p5.map(absDiff, 0, 30, 1, 0.1, true);
         console.log('speed: ' + absDiff);
 
 

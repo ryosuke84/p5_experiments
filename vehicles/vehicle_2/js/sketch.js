@@ -8,6 +8,7 @@ const sketch = p5 => {
   let canvas;
 
   let vehicle;
+  let vehicles = [];
   let emitter;
   
   p5.setup = () => {
@@ -15,7 +16,11 @@ const sketch = p5 => {
     canvas.style('border', 'solid 1px');
     p5.background(255);
 
-    vehicle = new Vehicle(p5, p5.random(p5.width), p5.random(p5.height));
+    // vehicle = new Vehicle(p5, p5.random(p5.width), p5.random(p5.height));
+    for(let i = 0; i <4 ; i++){
+      const v = new Vehicle(p5, p5.random(p5.width), p5.random(p5.height));
+      vehicles.push(v); 
+    }
     emitter = new Emitter(p5, p5.width/2, p5.height/2);
   };
 
@@ -23,7 +28,10 @@ const sketch = p5 => {
     p5.background(255);
 
     emitter.display();
-    vehicle.run(emitter);
+    for(let i = 0; i < vehicles.length; i++){
+      vehicles[i].run(emitter);
+    }
+    // vehicle.run(emitter);
 
     // if(p5.mouseIsPressed) {
     //   const activations =  vehicle.sense(emitter);
