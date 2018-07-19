@@ -1,42 +1,41 @@
 import {Vector} from 'p5';
 
 class Sensor {
-    constructor({p5, xOffset, yOffset,vehicle, emitters}) {
+    constructor({p5, xOffset, yOffset}) {
         this.p5 = p5;
         this.xOffset = xOffset;
         this.yOffset = yOffset;
-        this.vehicle = vehicle;
-        this.emitters = emitters;
+        this.MAXDIST = 500;
     }
 
-    getLocation() {
+    getLocation(vehicle) {
         const p5 = this.p5;
 
         const pos = p5.createVector(
-            this.vehicle.location.x + this.xOffset,
-            this.vehicle.location.y + this.yOffset
+            vehicle.location.x + this.xOffset,
+            vehicle.location.y + this.yOffset
         );
-        const angle = this.vehicle.velocity.heading() + Math.PI/2 ;
+        const angle = vehicle.velocity.heading() + Math.PI/2 ;
 
         const newPos = p5.createVector();
-        newPos.x = Math.cos(angle)*(pos.x - this.vehicle.location.x) - Math.sin(angle)*(pos.y - this.vehicle.location.y) + this.vehicle.location.x;
-        newPos.y = Math.sin(angle)*(pos.x - this.vehicle.location.x) + Math.cos(angle)*(pos.y - this.vehicle.location.y) + this.vehicle.location.y;
+        newPos.x = Math.cos(angle)*(pos.x - vehicle.location.x) - Math.sin(angle)*(pos.y - vehicle.location.y) + vehicle.location.x;
+        newPos.y = Math.sin(angle)*(pos.x - vehicle.location.x) + Math.cos(angle)*(pos.y - vehicle.location.y) + vehicle.location.y;
         return newPos; 
     }
 
-    activation() {
+    activation(vehicle, emitters) {
         const p5 =  this.p5;
-        let activation = 0;
+        
+        const sensorLocation = this.getLocation(vehicle);
 
-        const sensorLocation = this.getLocation();
+        let activation = 0;
         for(emitter of emitters) {
             const dist = Vector.dist(sensorLocation, emitter.location);
+            const currActivation = map(dist, this.MAXDIST, 0, 0.1, this.MAXDIST, true);
+            activation += currActivation;
             
         }
 
-        const dist  = Vector.dist(sensor, emitter.location);
-
-        const activation = p5.map(dist, p5.width/2, 0, 0.1 ,p5.width/2, true);
         return activation;
     }
 }
