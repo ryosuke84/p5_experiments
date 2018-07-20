@@ -15,7 +15,7 @@ const sketch = p5 => {
     canvas.style('border', 'solid 1px');
     p5.background(255);
 
-    for(let i = 0; i <4 ; i++){
+    for(let i = 0; i <1 ; i++){
       const v = new Vehicle(p5, p5.random(p5.width), p5.random(p5.height));
       vehicles.push(v); 
     }
