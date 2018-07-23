@@ -1,10 +1,11 @@
 import {Vector} from 'p5';
 
 class Sensor {
-    constructor({p5, xOffset, yOffset}) {
+    constructor({p5, xOffset, yOffset, type}) {
         this.p5 = p5;
         this.xOffset = xOffset;
         this.yOffset = yOffset;
+        this.type = type;
         this.MAXDIST = 500;
     }
 
@@ -29,7 +30,9 @@ class Sensor {
         const sensorLocation = this.getLocation(vehicle);
 
         let activation = 0;
-        for(emitter of emitters) {
+        const filteredEmitters = emitters.filter((emitter) => emitter.type === this.type);
+
+        for(const emitter of filteredEmitters) {
             const dist = Vector.dist(sensorLocation, emitter.location);
             const currActivation = map(dist, this.MAXDIST, 0, 0.1, this.MAXDIST, true);
             activation += currActivation;

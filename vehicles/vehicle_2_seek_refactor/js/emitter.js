@@ -1,9 +1,10 @@
 class Emitter {
-    constructor(renderer, x, y) {
+    constructor(renderer, x, y, type) {
         this.renderer = renderer;
 
         const p5 = this.renderer;
         this.location = p5.createVector(x, y);
+        this.type = type;
     }
 
     display() {

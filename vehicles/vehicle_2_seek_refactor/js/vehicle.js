@@ -1,7 +1,7 @@
 import {Vector} from 'p5';
 
 class Vehicle {
-    constructor(render, x, y, sensors, leftMotor, rightMotor, sensorWiring){
+    constructor(render, x, y, wirings){
         this.render = render;
 
         const p5 =  this.render;
@@ -13,12 +13,7 @@ class Vehicle {
         this.maxSpeed = 7;
         this.maxSteer = 0.3;
 
-
-        this.sensors = sensors;
-        this.leftMotor = leftMotor;
-        this.rightMotor = rightMotor;
-
-        this.sensorWiring = sensorWiring;
+        this.wirings = wirings;
 
         this.leftSensor = {
             xOffset: 5,
@@ -53,13 +48,13 @@ class Vehicle {
         p5.pop();
     }
 
-    displayDebug(emitter) {
+    displayDebug() {
         const p5  = this.render;
 
-        p5.push()
-        p5.stroke(0)
-        p5.line(0, p5.height/2, p5.width, p5.height/2)
-        p5.pop()
+        // p5.push()
+        // p5.stroke(0)
+        // p5.line(0, p5.height/2, p5.width, p5.height/2)
+        // p5.pop()
 
         p5.push()
         p5.stroke('red')
@@ -72,32 +67,38 @@ class Vehicle {
         p5.pop()
 
        
-
-        this._displaySensorDebug(this.getLeftSensorPos(), emitter);
-        this._displaySensorDebug(this.getRightSensorPos(), emitter);
+        const sensors =  [...this.wirings.left.sensors, ...this.wirings.right.sensors];
+        for(const sensor of sensors) {
+            this._displaySensorDebug(sensor, this.wirings.emitters);
+        }
 
     }
 
-    _displaySensorDebug(sensor, emitter) {
+    _displaySensorDebug(sensor, emitters) {
         const p5  = this.render;
 
-        const startX = sensor.x;
-        const startY = sensor.y;
+        const sensorLocation = sensor.getLocation(this);
+        const startX = sensorLocation.x;
+        const startY = sensorLocation.y;
 
-        const endX = emitter.location.x;
-        const endY = emitter.location.y;
+        const filteredEmitters = emitters.filter((emitter) => emitter.type === sensor.type);
+        for(const emitter of filteredEmitters) {
+            const endX = emitter.location.x;
+            const endY = emitter.location.y;
 
-        const middleX = (startX + endX)/2;
-        const middleY = (startY + endY)/2;
+            // const middleX = (startX + endX)/2;
+            // const middleY = (startY + endY)/2;
 
-        p5.push();
-        p5.stroke(0);
-        p5.line(startX, startY, endX, endY);
-        p5.ellipse(startX,startY, 5,5)
-        // p5.ellipse(middleX,middleY, 5,5)
-        p5.fill(0)
-        p5.text(this._sensorActivation(sensor, emitter).toFixed(4), middleX,middleY)
-        p5.pop();
+            p5.push();
+            p5.stroke(0);
+            p5.line(startX, startY, endX, endY);
+            p5.ellipse(startX,startY, 5,5)
+            // p5.ellipse(middleX,middleY, 5,5)
+            // p5.fill(0)
+            // p5.text(sensor.activation(this, emitters).toFixed(4), middleX,middleY)
+            p5.pop();
+        }
+        
     }
 
     update() {
@@ -139,11 +140,8 @@ class Vehicle {
     }
 
     run(emitter) {
-        // const activations =  this.sense(emitter);
-
-        // this.applyTorque(activations[1], activations[0]);
-        this.steer(emitter);
-        this.update();
+        // this.steer(emitter);
+        // this.update();
         this.display();
         this.displayDebug(emitter);
     }
