@@ -1,7 +1,7 @@
 import {Vector} from 'p5';
 
 class Vehicle {
-    constructor(render, x, y){
+    constructor(render, x, y, sensors, leftMotor, rightMotor, sensorWiring){
         this.render = render;
 
         const p5 =  this.render;
@@ -14,6 +14,12 @@ class Vehicle {
         this.maxSteer = 0.3;
 
 
+        this.sensors = sensors;
+        this.leftMotor = leftMotor;
+        this.rightMotor = rightMotor;
+
+        this.sensorWiring = sensorWiring;
+
         this.leftSensor = {
             xOffset: 5,
             yOffset: -25
@@ -24,6 +30,7 @@ class Vehicle {
             yOffset: -25
         }
     }
+
 
     display() {
         const p5 = this.render;
@@ -129,88 +136,6 @@ class Vehicle {
         steer.limit(this.maxSteer);
 
         this.applyForce(steer);
-    }
-
-    applyTorque(leftForce, rightForce) {
-        const p5 = this.render;
-
-        let leftTorque = leftForce;
-        // leftTorque = p5.constrain(leftTorque, 0, 10);
-
-        let rightTorque = rightForce;
-        // rightTorque = p5.constrain(rightTorque, 0, 10);
-
-
-        let diff = (leftTorque-rightTorque)*2
-        // console.log(diff)
-        
-        let totalAngle = p5.constrain(diff, -this.maxTorque, this.maxTorque);
-        // console.log('angle: ' +  totalAngle);
-        totalAngle = p5.radians(totalAngle);
-        // console.log('radians: ' + totalAngle)
-
-        // console.log('totalAngle: ' + totalAngle)
-        // console.log('before rotation: ' + this.direction)
-        this.direction.rotate(totalAngle);
-        // console.log('after rotation: ' + this.direction)
-
-        //Calculate the resulting "push"
-        let absDiff = p5.abs(leftTorque-rightTorque);
-        console.log('absDiff: ' + absDiff);
-        // absDiff = p5.constrain(absDiff, 0, 60);
-        absDiff = p5.map(absDiff, 0, 30, 1, 0.1, true);
-        console.log('speed: ' + absDiff);
-
-
-        // let torqueSum = leftTorque+rightTorque;
-        // torqueSum = p5.constrain(torqueSum, 0, 10);
-        // console.log('torqueSum: ' + torqueSum)
-        // const magnitude = absDiff*(1/torqueSum)
-        // console.log('speed: ' + magnitude);
-        this.applyForce(absDiff);
-
-
-    }
-
-    _getSensorPos(sensor) {
-        const p5 = this.render;
-
-        const pos = p5.createVector(
-            this.location.x  + sensor.xOffset,
-            this.location.y + sensor.yOffset
-        );
-        const angle = this.velocity.heading() + p5.PI/2 ;
-
-        const newPos = p5.createVector();
-        newPos.x = p5.cos(angle)*(pos.x - this.location.x) - p5.sin(angle)*(pos.y - this.location.y) + this.location.x;
-        newPos.y = p5.sin(angle)*(pos.x - this.location.x) + p5.cos(angle)*(pos.y - this.location.y) + this.location.y;
-        return newPos; 
-    }
-
-    getLeftSensorPos() {
-        return this._getSensorPos(this.leftSensor);
-    }
-
-    getRightSensorPos() {
-        return this._getSensorPos(this.rightSensor);
-    }
-
-    _sensorActivation(sensor, emitter){
-        const p5 =  this.render;
-
-        const dist  = Vector.dist(sensor, emitter.location);
-
-        const activation = p5.map(dist, p5.width/2, 0, 0.1 ,p5.width/2, true);
-        return activation;
-    }
-
-    sense(emitter) {
-        let activations = [];
-        activations.push(this._sensorActivation(this.getLeftSensorPos(),emitter))
-        activations.push(this._sensorActivation(this.getRightSensorPos(), emitter))
-        // console.log(activations)
-        return activations;
-
     }
 
     run(emitter) {

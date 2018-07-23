@@ -1,15 +1,11 @@
 class Motor {
-    constructor({sensors, mapppings}) {
-        this.sensors= sensors;
-        this.mapppings = mapppings;
-      
-    }
+    constructor() {}
 
-    run(vehicle, emitters) {
+    run(inputs, mappings) {
         let totalActivation = 0;
-        for(let i = 0; i < this.sensors.length; i++){
-            const mapping = this.mapppings[i];
-            const activation = mapping(this.sensors[i].activation(vehicle,emitters));
+        for(let i = 0; i < inputs.length; i++){
+            const mapping = mappings[i];
+            const activation = mapping(inputs[i]);
 
             totalActivation += activation;
         }
