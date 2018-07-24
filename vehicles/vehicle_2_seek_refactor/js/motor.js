@@ -1,5 +1,7 @@
 class Motor {
-    constructor() {}
+    constructor() {
+        this.output = 0;
+    }
 
     run(inputs, mappings) {
         let totalActivation = 0;
@@ -10,6 +12,7 @@ class Motor {
             totalActivation += activation;
         }
 
+        this.output = totalActivation;
         return totalActivation;
     }
 

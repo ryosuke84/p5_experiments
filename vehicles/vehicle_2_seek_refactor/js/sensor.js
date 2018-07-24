@@ -34,7 +34,7 @@ class Sensor {
 
         for(const emitter of filteredEmitters) {
             const dist = Vector.dist(sensorLocation, emitter.location);
-            const currActivation = map(dist, this.MAXDIST, 0, 0.1, this.MAXDIST, true);
+            const currActivation = p5.map(dist, this.MAXDIST, 0, 0.7, this.MAXDIST, true);
             activation += currActivation;
             
         }

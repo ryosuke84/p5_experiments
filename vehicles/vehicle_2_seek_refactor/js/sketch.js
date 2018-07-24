@@ -19,8 +19,17 @@ const sketch = p5 => {
     p5.background(255);
 
     //Init emitters
-    emitter = new Emitter(p5, p5.width/2, p5.height/2, 'light');
-    emitters.push(emitter);
+    for(let i = 0; i < 5; i++) {
+      emitter = new Emitter({
+        p5: p5, 
+        x: p5.random(p5.width), 
+        y: p5.random(p5.height), 
+        type: 'light',
+        color: p5.color('yellow'),
+        size: 20});
+      emitters.push(emitter);
+    }
+    
 
     //Init wirings
     const wirings = {

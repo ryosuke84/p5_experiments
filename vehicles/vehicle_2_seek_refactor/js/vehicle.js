@@ -10,20 +10,11 @@ class Vehicle {
         this.acceleration = p5.createVector();
         this.direction = Vector.random2D();
 
-        this.maxSpeed = 7;
+        this.maxSpeed = 10;
+        this.angleMult = 0.03
         this.maxSteer = 0.3;
 
         this.wirings = wirings;
-
-        this.leftSensor = {
-            xOffset: 5,
-            yOffset: -25
-        }
-
-        this.rightSensor = {
-            xOffset: 35,
-            yOffset: -25
-        }
     }
 
 
@@ -105,7 +96,8 @@ class Vehicle {
         this.velocity.add(this.acceleration);
         this.location.add(this.velocity);
 
-        this.velocity.limit(10)
+        // console.log('vel: ' + this.velocity.mag())
+        // this.velocity.limit(10)
 
         this.acceleration.mult(0);
     }
@@ -114,8 +106,37 @@ class Vehicle {
         this.acceleration.add(force);
     }
 
+    
+        steer() {
+        const p5 = this.render;
 
-    steer(target) {
+        const leftActivations = this.wirings.left.sensors.map(sensor => sensor.activation(this, this.wirings.emitters));
+        const rightActivations = this.wirings.right.sensors.map(sensor => sensor.activation(this, this.wirings.emitters));
+
+        const leftMotorOut = this.wirings.left.motor.run(leftActivations, this.wirings.left.motorMappings);
+        const rightMotorOut = this.wirings.right.motor.run(rightActivations, this.wirings.right.motorMappings);
+
+        let diff = (leftMotorOut - rightMotorOut)*2;
+        // console.log('diff: ' + diff)
+        let steerAngle = p5.radians(diff);
+        // console.log('steerAngle: ' + steerAngle*this.angleMult)
+
+        const desidered = this.velocity.copy();
+        desidered.rotate(steerAngle*this.angleMult);
+        desidered.normalize();
+        
+        let activationMean = (leftMotorOut + rightMotorOut)/2;
+        activationMean = p5.map(activationMean, 0.1, p5.width/2, 0.7, this.maxSpeed);
+        // desidered.mult(this.maxSpeed);
+        desidered.mult(activationMean);
+        
+        const steer = Vector.sub(desidered, this.velocity);
+        steer.limit(this.maxSteer);
+
+        this.applyForce(steer);
+    }
+
+    steer_old(target) {
         const p5 = this.render;
 
         const activations =  this.sense(target);
@@ -129,7 +150,7 @@ class Vehicle {
         desidered.normalize();
         
         let activationMean = (activations[0] + activations[1])/2;
-        activationMean = p5.map(activationMean, 0.1, p5.width/2, 0.1, this.maxSpeed);
+        activationMean = p5.map(activationMean, 0.1, p5.width/2, 0.7, this.maxSpeed);
         // desidered.mult(this.maxSpeed);
         desidered.mult(activationMean);
         
@@ -140,8 +161,8 @@ class Vehicle {
     }
 
     run(emitter) {
-        // this.steer(emitter);
-        // this.update();
+        this.steer(emitter);
+        this.update();
         this.display();
         this.displayDebug(emitter);
     }
