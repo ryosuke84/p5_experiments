@@ -107,7 +107,7 @@ class Vehicle {
     }
 
     
-        steer() {
+    steer() {
         const p5 = this.render;
 
         const leftActivations = this.wirings.left.sensors.map(sensor => sensor.activation(this, this.wirings.emitters));
@@ -126,30 +126,6 @@ class Vehicle {
         desidered.normalize();
         
         let activationMean = (leftMotorOut + rightMotorOut)/2;
-        activationMean = p5.map(activationMean, 0.1, p5.width/2, 0.7, this.maxSpeed);
-        // desidered.mult(this.maxSpeed);
-        desidered.mult(activationMean);
-        
-        const steer = Vector.sub(desidered, this.velocity);
-        steer.limit(this.maxSteer);
-
-        this.applyForce(steer);
-    }
-
-    steer_old(target) {
-        const p5 = this.render;
-
-        const activations =  this.sense(target);
-
-        let diff = (activations[1] - activations[0])*2;
-        let steerAngle = p5.radians(diff);
-        // console.log('steerAngele: ' + steerAngle)
-
-        const desidered = this.velocity.copy();
-        desidered.rotate(steerAngle);
-        desidered.normalize();
-        
-        let activationMean = (activations[0] + activations[1])/2;
         activationMean = p5.map(activationMean, 0.1, p5.width/2, 0.7, this.maxSpeed);
         // desidered.mult(this.maxSpeed);
         desidered.mult(activationMean);

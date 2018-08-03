@@ -56,9 +56,39 @@ const sketch = p5 => {
       emitters: emitters
     }
 
-    //Init Vehicles
+    const wirings_avoid = {
+      left:{
+        motor: new Motor(),
+        sensors: [new Sensor({
+          p5: p5,
+          xOffset: 5,
+          yOffset: -25,
+          type: 'light'
+        })],
+        motorMappings: [x => x]
+      },
+      right:{
+        motor: new Motor(),
+        sensors: [new Sensor({
+          p5: p5,
+          xOffset: 35,
+          yOffset: -25,
+          type: 'light'
+        })],
+        motorMappings: [x => x]
+      },
+      emitters: emitters
+    }    
+
+    //Init Vehicles attracted
     for(let i = 0; i <1 ; i++){
       const v = new Vehicle(p5, p5.random(p5.width), p5.random(p5.height), wirings);
+      vehicles.push(v); 
+    }
+
+    //Init Vehicles avoid
+    for(let i = 0; i <1 ; i++){
+      const v = new Vehicle(p5, p5.random(p5.width), p5.random(p5.height), wirings_avoid);
       vehicles.push(v); 
     }
 

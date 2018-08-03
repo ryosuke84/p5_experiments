@@ -1,6 +1,9 @@
 class Motor {
-    constructor() {
+    constructor(p5) {
+        this.p5 = p5;
         this.output = 0;
+        this.MAX_OUTPUT = 500;
+        this.MIN_OUTPUT = 0.7;
     }
 
     run(inputs, mappings) {
@@ -15,6 +18,10 @@ class Motor {
         this.output = totalActivation;
         return totalActivation;
     }
+
+    directMapping(input) {
+        return input;
+    } 
 
 
 }
