@@ -1,10 +1,11 @@
 class Dino {
-    constructor(p5) {
+    constructor(p5, spriteSheet) {
         this.p5 = p5;
         this.x = 100;
-        this.y = 460;
-        this.width = 20;
-        this.height = 40;
+        this.y = 500 - 94/2;
+        this.width = 88/2 -10;
+        this.height = 94/2;
+        this.spriteSheet = spriteSheet; // w:88, h:94, 6 imgs
 
         this.velocity = 0;
         this.gravity = 0.5;
@@ -14,14 +15,37 @@ class Dino {
         this.isJumping =  false;
         this.isAlive = true;
 
+        //Animation Variables
+        this.runnigFrames = [
+            this.spriteSheet.get(88*2, 0, 88, 94),
+            this.spriteSheet.get(88*3, 0, 88, 94)
+        ];
+        this.speed = 0.2;
+        this.index = 0;
     }
 
     show() {
         const p5 = this.p5;
         p5.push();
-        p5.fill(175)
+        p5.noFill();
+        p5.stroke('red');
+        // p5.fill(175)
         p5.rect(this.x, this.y, this.width, this.height);
+
+        let index = p5.floor(this.index)%this.runnigFrames.length;
+        
+        p5.image(this.runnigFrames[index],this.x,this.y,88/2,94/2,0,0);
         p5.pop();
+    }
+
+    _animate() {
+        const p5 = this.p5;
+
+        // if(p5.frameCount%5 === 0){
+        //     this.index = (this.index + 1)%2;
+        // }
+
+        this.index += this.speed;
     }
 
     _update() {
@@ -38,8 +62,8 @@ class Dino {
             this.y = 0;
         }
 
-        if(this.y > 460) {
-            this.y = 460;
+        if(this.y > 500 - 94/2) {
+            this.y = 500 - 94/2;
             this.isJumping = false;
         }
     }
@@ -84,6 +108,7 @@ class Dino {
 
     run(obstacles) {
         // console.log('velocity: ' + this.velocity)
+        this._animate();
         this._applyGravity();
         this._update();
         this._checkBoundaries();

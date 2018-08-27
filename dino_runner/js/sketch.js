@@ -2,7 +2,8 @@ import p5 from 'p5';
 import 'p5/lib/addons/p5.dom';
 import Dino from './dino.js';
 import Cactus from './cactus.js';
-
+import dinoSpriteUrl from '../assets/dino.png'; // w:88, h:94, 6 imgs
+import cactusSpriteUrl from '../assets/cactus.png'; //w:50, h:100, 6 imgs
 
 const sketch = p5 => {
   let canvas;
@@ -14,16 +15,24 @@ const sketch = p5 => {
   let cactusSpawnTime;
   let hiScore;
 
+  let dinoSpriteSheet;
+  let cactusSpriteSheet;
+
   const init = () => {
-    dino = new Dino(p5);
+    dino = new Dino(p5, dinoSpriteSheet);
 
     cactuses = [];
-    cactuses.push(new Cactus(p5));
+    cactuses.push(new Cactus(p5, cactusSpriteSheet));
     minSpawnTime = 60;
     maxSpawnTime = 100;
     cactusSpawnTime = 100;
     hiScore = 0;
   }
+
+  p5.preload = () => {
+    dinoSpriteSheet = p5.loadImage(dinoSpriteUrl);
+    cactusSpriteSheet = p5.loadImage(cactusSpriteUrl);
+  };
 
   p5.setup = () => {
     canvas = p5.createCanvas(900, 600);
@@ -47,6 +56,7 @@ const sketch = p5 => {
     p5.line(0,500, 900, 500);
     
     // ************************* RENDERING ****************//
+
     //Render Dino
     dino.show();
 
@@ -77,7 +87,7 @@ const sketch = p5 => {
       cactusSpawnTime--;
       if(cactusSpawnTime === 0){
         
-        cactuses.push(new Cactus(p5));
+        cactuses.push(new Cactus(p5,cactusSpriteSheet));
         cactusSpawnTime = p5.floor(p5.random(minSpawnTime, maxSpawnTime));
         // console.log('cactusSpanwTime :' + cactusSpawnTime);
       }
