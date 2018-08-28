@@ -1,5 +1,5 @@
 class Cactus {
-    constructor(p5, spriteSheet) {
+    constructor(p5, spriteSheet, goundLevel, velocity) {
         this.p5 = p5;
         this.x = p5.width + 20;
         this.y = 460;
@@ -11,7 +11,7 @@ class Cactus {
         const index = p5.floor(p5.random(0,5));
         this.sprite = spriteSheet.get(50*index, 0, 50, 100);
 
-        this.velocity = -5;
+        this.velocity = -7;
     }
 
     show() {

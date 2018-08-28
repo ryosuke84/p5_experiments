@@ -19,12 +19,12 @@ const sketch = p5 => {
   let cactusSpriteSheet;
 
   const init = () => {
-    dino = new Dino(p5, dinoSpriteSheet);
+    dino = new Dino(p5, dinoSpriteSheet, 500);
 
     cactuses = [];
     cactuses.push(new Cactus(p5, cactusSpriteSheet));
-    minSpawnTime = 60;
-    maxSpawnTime = 100;
+    minSpawnTime = 50;
+    maxSpawnTime = 90;
     cactusSpawnTime = 100;
     hiScore = 0;
   }
@@ -106,10 +106,10 @@ const sketch = p5 => {
 
         // console.log(hiScore)
         if(hiScore%30 === 0) {
-          minSpawnTime -= 5;
-          maxSpawnTime -= 5;
-          console.log('minSpawn: ' + minSpawnTime);
-          console.log('maxSpawn: ' + maxSpawnTime);
+          // minSpawnTime -= 5;
+          // maxSpawnTime -= 5;
+          // console.log('minSpawn: ' + minSpawnTime);
+          // console.log('maxSpawn: ' + maxSpawnTime);
         }
       }
       

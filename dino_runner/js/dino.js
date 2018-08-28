@@ -1,11 +1,24 @@
 class Dino {
-    constructor(p5, spriteSheet) {
+    constructor(p5, spriteSheet, groundLevel) {
         this.p5 = p5;
-        this.x = 100;
-        this.y = 500 - 94/2;
-        this.width = 88/2 -10;
-        this.height = 94/2;
+        this.groundLevel = groundLevel;
         this.spriteSheet = spriteSheet; // w:88, h:94, 6 imgs
+
+        //Dino size
+        this.dinoWidth =  88/2;
+        this.dinoHeight = 94/2;
+
+        //Dino hitBox size
+        this.hitBoxWidth = 88/2;
+        this.hitBoxHeight = 94/2;
+
+        //Dino and hitBox Position
+        this.bottomPos = (groundLevel - this.hitBoxHeight) + 10;
+        this.x = 100;
+        this.y = this.bottomPos;
+        // this.width = 88/2 -10;
+        // this.height = 94/2;
+        
 
         this.velocity = 0;
         this.gravity = 0.5;
@@ -30,21 +43,14 @@ class Dino {
         p5.noFill();
         p5.stroke('red');
         // p5.fill(175)
-        p5.rect(this.x, this.y, this.width, this.height);
+        p5.rect(this.x, this.y, this.hitBoxWidth, this.hitBoxHeight);
 
         let index = p5.floor(this.index)%this.runnigFrames.length;
-        
-        p5.image(this.runnigFrames[index],this.x,this.y,88/2,94/2,0,0);
+        p5.image(this.runnigFrames[index], this.x, this.y, this.dinoWidth, this.dinoHeight, 0, 0);
         p5.pop();
     }
 
     _animate() {
-        const p5 = this.p5;
-
-        // if(p5.frameCount%5 === 0){
-        //     this.index = (this.index + 1)%2;
-        // }
-
         this.index += this.speed;
     }
 
@@ -62,16 +68,16 @@ class Dino {
             this.y = 0;
         }
 
-        if(this.y > 500 - 94/2) {
-            this.y = 500 - 94/2;
+        if(this.y > this.bottomPos) {
+            this.y = this.bottomPos;
             this.isJumping = false;
         }
     }
 
     __hasHitObstacle(obstacle) {
         const dino_lx = this.x;
-        const dino_rx = this.x + this.width;
-        const dino_y = this.y + this.height;
+        const dino_rx = this.x + this.hitBoxWidth;
+        const dino_y = this.y + this.hitBoxHeight;
 
         const obs_lx = obstacle.x;
         const obs_rx = obstacle.x + obstacle.width;
