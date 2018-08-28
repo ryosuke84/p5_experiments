@@ -7,6 +7,7 @@ class Motor {
     }
 
     run(inputs, mappings) {
+        const p5 =  this.p5;
         let totalActivation = 0;
         for(let i = 0; i < inputs.length; i++){
             const mapping = mappings[i];
@@ -15,6 +16,8 @@ class Motor {
             totalActivation += activation;
         }
 
+
+        totalActivation = p5.map(totalActivation, 0.7, 500, this.MIN_OUTPUT, this.MAX_OUTPUT);
         this.output = totalActivation;
         return totalActivation;
     }

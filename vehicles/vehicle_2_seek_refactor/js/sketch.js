@@ -34,7 +34,7 @@ const sketch = p5 => {
     //Init wirings
     const wirings = {
       left:{
-        motor: new Motor(),
+        motor: new Motor(p5),
         sensors: [new Sensor({
           p5: p5,
           xOffset: 35,
@@ -44,7 +44,7 @@ const sketch = p5 => {
         motorMappings: [x => x]
       },
       right:{
-        motor: new Motor(),
+        motor: new Motor(p5),
         sensors: [new Sensor({
           p5: p5,
           xOffset: 5,
@@ -58,7 +58,7 @@ const sketch = p5 => {
 
     const wirings_avoid = {
       left:{
-        motor: new Motor(),
+        motor: new Motor(p5),
         sensors: [new Sensor({
           p5: p5,
           xOffset: 5,
@@ -68,7 +68,7 @@ const sketch = p5 => {
         motorMappings: [x => x]
       },
       right:{
-        motor: new Motor(),
+        motor: new Motor(p5),
         sensors: [new Sensor({
           p5: p5,
           xOffset: 35,
