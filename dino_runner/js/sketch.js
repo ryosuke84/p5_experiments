@@ -13,6 +13,7 @@ const sketch = p5 => {
   let minSpawnTime;
   let maxSpawnTime;
   let cactusSpawnTime;
+  let cactusSpeed;
   let hiScore;
 
   let dinoSpriteSheet;
@@ -22,10 +23,11 @@ const sketch = p5 => {
     dino = new Dino(p5, dinoSpriteSheet, 500);
 
     cactuses = [];
-    cactuses.push(new Cactus(p5, cactusSpriteSheet));
-    minSpawnTime = 50;
-    maxSpawnTime = 90;
+    // cactuses.push(new Cactus(p5, cactusSpriteSheet, 500));
+    minSpawnTime = 40;
+    maxSpawnTime = 50;
     cactusSpawnTime = 100;
+    cactusSpeed = 7;
     hiScore = 0;
   }
 
@@ -73,8 +75,8 @@ const sketch = p5 => {
 
 
     // ************************* UPDATING ****************//
-    
-    if(dino.isAlive) {
+    if(1) {
+    // if(dino.isAlive) {
       //Update dino
       dino.run(cactuses);
       
@@ -87,7 +89,7 @@ const sketch = p5 => {
       cactusSpawnTime--;
       if(cactusSpawnTime === 0){
         
-        cactuses.push(new Cactus(p5,cactusSpriteSheet));
+        cactuses.push(new Cactus(p5,cactusSpriteSheet, 500, cactusSpeed));
         cactusSpawnTime = p5.floor(p5.random(minSpawnTime, maxSpawnTime));
         // console.log('cactusSpanwTime :' + cactusSpawnTime);
       }
@@ -101,11 +103,12 @@ const sketch = p5 => {
       }
 
       //Update Hi Score and Difficulty
-      if(p5.frameCount%30 === 0){
+      if(p5.frameCount%5 === 0){
         hiScore++;
 
         // console.log(hiScore)
-        if(hiScore%30 === 0) {
+        if(hiScore%100 === 0) {
+          cactusSpeed += 0.5;
           // minSpawnTime -= 5;
           // maxSpawnTime -= 5;
           // console.log('minSpawn: ' + minSpawnTime);

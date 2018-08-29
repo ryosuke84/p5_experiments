@@ -1,3 +1,7 @@
+import NeuralNetwork from '../../neural_network/nn.mjs';
+
+
+
 class Dino {
     constructor(p5, spriteSheet, groundLevel) {
         this.p5 = p5;
@@ -21,9 +25,9 @@ class Dino {
         
 
         this.velocity = 0;
-        this.gravity = 0.5;
-        this.jumpLift = -15;
-        this.maxVelocity = 4;
+        this.gravity = 0.6;
+        this.jumpLift = -18;
+        this.maxVelocity = 7;
 
         this.isJumping =  false;
         this.isAlive = true;
@@ -35,6 +39,15 @@ class Dino {
         ];
         this.speed = 0.2;
         this.index = 0;
+
+
+        //Dino Brain!!!!
+        this.brain = new NeuralNetwork({
+            in_nodes: 3,
+            hid_nodes: 4,
+            out_nodes:1
+        });
+        // console.log(this.brain);
     }
 
     show() {
@@ -113,10 +126,20 @@ class Dino {
         
     }
 
+    _think(obstacles) {
+        let inputs = [1, 1, 1];
+        let outputs = this.brain.predict(inputs);
+        if(outputs[0] > 0.5) {
+            this.jump();
+        }
+        // console.log(outputs);
+    }
+
     run(obstacles) {
         // console.log('velocity: ' + this.velocity)
         this._animate();
         this._applyGravity();
+        this._think(obstacles);
         this._update();
         this._checkBoundaries();
         for(let obst of obstacles){

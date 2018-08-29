@@ -33,7 +33,7 @@ class Cactus {
         const p5 = this.p5;
         p5.push();
         p5.noFill();
-        p5.sttroke('red');
+        p5.stroke('red');
         p5.rect(this.x, this.y, this.hitBoxWidth, this.hitBoxHeight);
         p5.image(this.sprite, this.x, this.y, this.cactusWidth, this.cactusHeight, 0, 0);
         p5.pop();
