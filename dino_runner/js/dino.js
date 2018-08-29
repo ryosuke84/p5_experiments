@@ -79,9 +79,10 @@ class Dino {
         const dino_rx = this.x + this.hitBoxWidth;
         const dino_y = this.y + this.hitBoxHeight;
 
-        const obs_lx = obstacle.x;
-        const obs_rx = obstacle.x + obstacle.width;
-        const obs_y = obstacle.y
+        const obstHitBox = obstacle.getHitBox();
+        const obs_lx = obstHitBox.x;
+        const obs_rx = obstHitBox.x + obstHitBox.width;
+        const obs_y = obstHitBox.y
 
 
         //On rectangle is on left side of another
