@@ -43,7 +43,7 @@ class Dino {
 
         //Dino Brain!!!!
         this.brain = new NeuralNetwork({
-            in_nodes: 3,
+            in_nodes: 2,
             hid_nodes: 4,
             out_nodes:1
         });
@@ -127,7 +127,26 @@ class Dino {
     }
 
     _think(obstacles) {
-        let inputs = [1, 1, 1];
+
+        const p5 = this.p5;
+        //Find closest obstacle
+        let closest = {
+            x: Infinity
+        };
+        let closestD = Infinity;
+        for(let i = 0; i < obstacles.length; i++) {
+            const obstHitBox = obstacles[i].getHitBox();
+            const dist = obstHitBox.x - this.x
+            if( dist > 0 && dist < closestD) {
+               closest = obstHitBox;
+               closestD =  dist;
+            }
+        }
+
+        let inputs = [
+            this.x/p5.width,
+            closest.x/p5.width
+        ];
         let outputs = this.brain.predict(inputs);
         if(outputs[0] > 0.5) {
             this.jump();
