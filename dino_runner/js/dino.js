@@ -29,8 +29,11 @@ class Dino {
         this.jumpLift = -18;
         this.maxVelocity = 7;
 
+        //Dino state
         this.isJumping =  false;
         this.isAlive = true;
+        this.score = 0;
+        this.fitness = 0;
 
         //Animation Variables
         this.runnigFrames = [
@@ -73,6 +76,10 @@ class Dino {
             this.velocity = this.maxVelocity;
         }
 
+    }
+
+    _updateScore() {
+        this.score+= 1;
     }
 
     _checkBoundaries() {
@@ -118,14 +125,6 @@ class Dino {
         
     }
 
-    jump() {
-        if(!this.isJumping){
-            this.velocity += this.jumpLift;
-            this.isJumping = true;
-        }
-        
-    }
-
     _think(obstacles) {
 
         const p5 = this.p5;
@@ -154,12 +153,21 @@ class Dino {
         // console.log(outputs);
     }
 
+    jump() {
+        if(!this.isJumping){
+            this.velocity += this.jumpLift;
+            this.isJumping = true;
+        }
+        
+    }
+
     run(obstacles) {
         // console.log('velocity: ' + this.velocity)
         this._animate();
         this._applyGravity();
         this._think(obstacles);
         this._update();
+        this._updateScore();
         this._checkBoundaries();
         for(let obst of obstacles){
             if(this.__hasHitObstacle(obst)){
