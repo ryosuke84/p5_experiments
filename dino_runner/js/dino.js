@@ -40,6 +40,7 @@ class Dino {
             this.spriteSheet.get(88*2, 0, 88, 94),
             this.spriteSheet.get(88*3, 0, 88, 94)
         ];
+        // console.log(this.runnigFrames)
         this.speed = 0.2;
         this.index = 0;
 
@@ -165,7 +166,7 @@ class Dino {
         // console.log('velocity: ' + this.velocity)
         this._animate();
         this._applyGravity();
-        this._think(obstacles);
+        // this._think(obstacles);
         this._update();
         this._updateScore();
         this._checkBoundaries();
