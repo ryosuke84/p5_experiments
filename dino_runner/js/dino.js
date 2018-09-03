@@ -112,14 +112,17 @@ class Dino {
 
         if(this.y > this.bottomPos) {
             this.y = this.bottomPos;
-            this.state = STATE.RUNNING;
+            // if(this.state !== STATE.DUCKING) {
+            //     this.state = STATE.RUNNING;
+            // }
+            
         }
     }
 
     _checkNoInput() {
         const p5 =  this.p5;
         // console.log(p5.keyIsPressed)
-        if(this.state === STATE.RUNNING && !p5.keyIsPressed){
+        if(this.y === this.bottomPos && !p5.keyIsDown(p5.DOWN_ARROW)){
             this._walk();
         }
     }
@@ -184,14 +187,15 @@ class Dino {
     }
 
     jump() {
-        if(this.state !== STATE.JUMPING){
+        // console.log(this.state)
+        if(this.state !== STATE.JUMPING && this.state !== STATE.DUCKING){
             this.velocity += this.jumpLift;
             this.state = STATE.JUMPING;
         }   
     }
 
     duck() {
-        if(this.state !== STATE.JUMPING) {
+        if(this.y === this.bottomPos) {
             this.state = STATE.DUCKING;
             this.dinoWidth =  this.duckingSpriteWidth;
             this.dinoHeight = this.duckingSpriteHeight;
@@ -201,6 +205,7 @@ class Dino {
 
             this.bottomPos = (this.groundLevel - this.hitBoxHeight);
             this.y = this.bottomPos;
+            // console.log(this.state)
         }
     }
 
@@ -217,7 +222,6 @@ class Dino {
     }
 
     run(obstacles) {
-        // console.log('velocity: ' + this.velocity)
         this._animate();
         this._applyGravity();
         // this._think(obstacles);
@@ -225,6 +229,7 @@ class Dino {
         this._updateScore();
         this._checkBoundaries();
         this._checkNoInput();
+        // console.log(this.state)
         for(let obst of obstacles){
             if(this.__hasHitObstacle(obst)){
                 this.isAlive = false;
