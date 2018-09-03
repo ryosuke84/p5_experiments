@@ -94,6 +94,8 @@ const sketch = p5 => {
   ]
   let cactusFrames;
   let pteroFrames;
+  let runningDinoFrames;
+  let duckingDinoFrames;
 
 
   p5.preload = () => {
@@ -103,7 +105,8 @@ const sketch = p5 => {
 
   const init = () => {
     for(let i = 0; i < DINOS_POPULATION; i++){
-      dinos.push(new Dino(p5, dinoSpriteSheet, 500));
+      // dinos.push(new Dino(p5, dinoSpriteSheet, 500));
+      dinos.push(new Dino(p5,{runningFrames:runningDinoFrames, duckingFrames: duckingDinoFrames, groundLevel: 500 +10 }));
     }
     
 
@@ -281,6 +284,10 @@ const sketch = p5 => {
 
     else if(p5.keyCode === 27 ) { //ESC
       init();
+    }
+
+    else if(p5.keyCode === p5.DOWN_ARROW){
+      dinos[0].duck();
     }
   };
 

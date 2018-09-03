@@ -1,23 +1,45 @@
 import NeuralNetwork from '../../neural_network/nn.mjs';
 
-
+const STATE = {
+    RUNNING: 'running',
+    JUMPING: 'jumping',
+    DUCKING: 'ducking'
+};
 
 class Dino {
-    constructor(p5, spriteSheet, groundLevel) {
+    constructor(p5, {runningFrames, duckingFrames, groundLevel}) {
         this.p5 = p5;
+        this.runningFrames = runningFrames;
+        this.duckingFrames = duckingFrames
         this.groundLevel = groundLevel;
-        this.spriteSheet = spriteSheet; // w:88, h:94, 6 imgs
+        // this.spriteSheet = spriteSheet; // w:88, h:94, 6 imgs
 
-        //Dino size
-        this.dinoWidth =  88/2;
-        this.dinoHeight = 94/2;
 
-        //Dino hitBox size
-        this.hitBoxWidth = 88/2;
-        this.hitBoxHeight = 94/2;
+        //Running Dino sptites size, hitbox size and animation frames
+        this.runningSpriteWidth = this.runningFrames[0].width;
+        this.runningSpriteHeight = this.runningFrames[0].height;
+        this.runningHitboxWidth = this.runningSpriteWidth;
+        this.runningHitboxHeight = this.runningSpriteHeight;
+        this.runningAnimationFrames = runningFrames.map( obj => obj.frame );
+
+        //Ducking Dino sptites size, hitbox size and animation frames
+        this.duckingSpriteWidth = this.duckingFrames[0].width;
+        this.duckingSpriteHeight = this.duckingFrames[0].height;
+        this.duckingHitboxWidth = this.duckingSpriteWidth;
+        this.duckingHitboxHeight = this.duckingSpriteHeight;
+        this.duckingAnimationFrames = duckingFrames.map( obj => obj.frame );
+
+
+        //Dino size. It changes depending on Dino state. Default: running
+        this.dinoWidth =  this.runningSpriteWidth;
+        this.dinoHeight = this.runningSpriteHeight;
+
+        //Dino hitBox size. It changes depending on Dino state. Default: running
+        this.hitBoxWidth = this.runningHitboxWidth;
+        this.hitBoxHeight = this.runningHitboxHeight;
 
         //Dino and hitBox Position
-        this.bottomPos = (groundLevel - this.hitBoxHeight) + 10;
+        this.bottomPos = (groundLevel - this.hitBoxHeight);
         this.x = 100;
         this.y = this.bottomPos;
         // this.width = 88/2 -10;
@@ -30,17 +52,16 @@ class Dino {
         this.maxVelocity = 7;
 
         //Dino state
+        this.state = STATE.RUNNING;
         this.isJumping =  false;
         this.isAlive = true;
         this.score = 0;
         this.fitness = 0;
 
         //Animation Variables
-        this.runnigFrames = [
-            this.spriteSheet.get(88*2, 0, 88, 94),
-            this.spriteSheet.get(88*3, 0, 88, 94)
-        ];
-        // console.log(this.runnigFrames)
+
+        //Contains the frame to animate Dino. It changes ohthe Dino state. Default: running
+        this.frames = this.runningAnimationFrames;
         this.speed = 0.2;
         this.index = 0;
 
@@ -62,8 +83,8 @@ class Dino {
         // p5.fill(175)
         p5.rect(this.x, this.y, this.hitBoxWidth, this.hitBoxHeight);
 
-        let index = p5.floor(this.index)%this.runnigFrames.length;
-        p5.image(this.runnigFrames[index], this.x, this.y, this.dinoWidth, this.dinoHeight, 0, 0);
+        let index = p5.floor(this.index)%this.frames.length;
+        p5.image(this.frames[index], this.x, this.y, this.dinoWidth, this.dinoHeight, 0, 0);
         p5.pop();
     }
 
@@ -91,7 +112,15 @@ class Dino {
 
         if(this.y > this.bottomPos) {
             this.y = this.bottomPos;
-            this.isJumping = false;
+            this.state = STATE.RUNNING;
+        }
+    }
+
+    _checkNoInput() {
+        const p5 =  this.p5;
+        // console.log(p5.keyIsPressed)
+        if(this.state === STATE.RUNNING && !p5.keyIsPressed){
+            this._walk();
         }
     }
 
@@ -155,11 +184,36 @@ class Dino {
     }
 
     jump() {
-        if(!this.isJumping){
+        if(this.state !== STATE.JUMPING){
             this.velocity += this.jumpLift;
-            this.isJumping = true;
+            this.state = STATE.JUMPING;
+        }   
+    }
+
+    duck() {
+        if(this.state !== STATE.JUMPING) {
+            this.state = STATE.DUCKING;
+            this.dinoWidth =  this.duckingSpriteWidth;
+            this.dinoHeight = this.duckingSpriteHeight;
+            this.hitBoxWidth = this.duckingHitboxWidth;
+            this.hitBoxHeight =  this.duckingSpriteHeight;
+            this.frames = this.duckingAnimationFrames;
+
+            this.bottomPos = (this.groundLevel - this.hitBoxHeight);
+            this.y = this.bottomPos;
         }
-        
+    }
+
+    _walk() {
+        this.state =  STATE.RUNNING;
+        this.dinoWidth =  this.runningSpriteWidth;
+        this.dinoHeight = this.runningSpriteHeight;
+        this.hitBoxWidth = this.runningHitboxWidth;
+        this.hitBoxHeight = this.runningHitboxHeight;
+        this.frames = this.runningAnimationFrames;
+
+        this.bottomPos = (this.groundLevel - this.hitBoxHeight);
+        this.y = this.bottomPos;
     }
 
     run(obstacles) {
@@ -170,6 +224,7 @@ class Dino {
         this._update();
         this._updateScore();
         this._checkBoundaries();
+        this._checkNoInput();
         for(let obst of obstacles){
             if(this.__hasHitObstacle(obst)){
                 this.isAlive = false;
