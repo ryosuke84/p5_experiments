@@ -243,7 +243,7 @@ const sketch = p5 => {
       cactusSpawnTime--;
       if(cactusSpawnTime === 0){
         const rndSpriteIndex = p5.floor(p5.random(0, cactusFrames.length-1));
-        cactuses.push(new Obstacle(p5,{animationFrames:[cactusFrames[rndSpriteIndex]], groundLevel:500+10, velocity:cactusSpeed}));
+        // cactuses.push(new Obstacle(p5,{animationFrames:[cactusFrames[rndSpriteIndex]], groundLevel:500+10, velocity:cactusSpeed}));
         
 
         cactusSpawnTime = p5.floor(p5.random(minSpawnTime, maxSpawnTime));
@@ -272,6 +272,12 @@ const sketch = p5 => {
           // console.log('maxSpawn: ' + maxSpawnTime);
         }
       }
+
+      //Cheking Down arrow down
+      if(p5.keyIsDown(p5.DOWN_ARROW)) {
+        console.log('down')
+        dinos[0].duck();
+      }
       
     }
     
@@ -286,9 +292,11 @@ const sketch = p5 => {
       init();
     }
 
-    else if(p5.keyCode === p5.DOWN_ARROW){
-      dinos[0].duck();
-    }
+    // else if(p5.keyCode === p5.DOWN_ARROW){
+    //   dinos[0].duck();
+    // }
+
+    return false;
   };
 
 };
