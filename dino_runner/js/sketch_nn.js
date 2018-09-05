@@ -2,8 +2,6 @@ import p5 from 'p5';
 import 'p5/lib/addons/p5.dom';
 import Dino from './dino.js';
 import Obstacle from './obstacle.js';
-import dinoSpriteUrl from '../assets/dino.png'; // w:88, h:94, 6 imgs
-import cactusSpriteUrl from '../assets/cactus.png'; //w:50, h:100, 6 imgs
 import spritesUrl from '../assets/sprites.png';
 
 const sketch = p5 => {
@@ -11,14 +9,14 @@ const sketch = p5 => {
 
   const DINOS_POPULATION = 1;
   let dinos = [];
-  let cactuses = [];
+  let obstacles = [];
   let minSpawnTime;
   let maxSpawnTime;
   let cactusSpawnTime;
   let cactusSpeed;
   let hiScore;
 
-  let dinoSpriteSheet;
+ 
   let spriteSheet;
   const SPRITES_CONFIG = [
     {
@@ -99,7 +97,6 @@ const sketch = p5 => {
 
 
   p5.preload = () => {
-    dinoSpriteSheet = p5.loadImage(dinoSpriteUrl);
     spriteSheet = p5.loadImage(spritesUrl);
   };
 
@@ -110,12 +107,12 @@ const sketch = p5 => {
     }
     
 
-    cactuses = [];
-    // cactuses.push(new Cactus(p5, cactusSpriteSheet, 500));
+    obstacles = [];
+    // obstacles.push(new Cactus(p5, cactusSpriteSheet, 500));
     // console.log(cactusFrames)
     const rndSpriteIndex = p5.floor(p5.random(0, cactusFrames.length-1));
-    cactuses.push(new Obstacle(p5,{animationFrames:[cactusFrames[rndSpriteIndex]], groundLevel:500+10, velocity:cactusSpeed}));
-    // cactuses.push(new Obstacle(p5,{animationFrames:pteroFrames, groundLevel:500+10, velocity:cactusSpeed}));
+    obstacles.push(new Obstacle(p5,{animationFrames:[cactusFrames[rndSpriteIndex]], groundLevel:500+10, velocity:cactusSpeed}));
+    // obstacles.push(new Obstacle(p5,{animationFrames:pteroFrames, groundLevel:500+10, velocity:cactusSpeed}));
 
     minSpawnTime = 40;
     maxSpawnTime = 70;
@@ -210,8 +207,8 @@ const sketch = p5 => {
     
 
     //Render obstacles
-    for(let i = cactuses.length-1; i >=0; i--) {
-      cactuses[i].show();
+    for(let i = obstacles.length-1; i >=0; i--) {
+      obstacles[i].show();
     }
 
     //Render Score
@@ -230,31 +227,31 @@ const sketch = p5 => {
           dinos.splice(i,1);
           continue;
         }
-        dinos[i].run(cactuses);
+        dinos[i].run(obstacles);
       }
       
       
-      //Update cactuses
-      for(let i = cactuses.length-1; i >=0; i--) {
-        cactuses[i].run();
+      //Update obstacles
+      for(let i = obstacles.length-1; i >=0; i--) {
+        obstacles[i].run();
       }
 
-      //Spawn new Cactuses
+      //Spawn new obstacles
       cactusSpawnTime--;
       if(cactusSpawnTime === 0){
         const rndSpriteIndex = p5.floor(p5.random(0, cactusFrames.length-1));
-        // cactuses.push(new Obstacle(p5,{animationFrames:[cactusFrames[rndSpriteIndex]], groundLevel:500+10, velocity:cactusSpeed}));
+        // obstacles.push(new Obstacle(p5,{animationFrames:[cactusFrames[rndSpriteIndex]], groundLevel:500+10, velocity:cactusSpeed}));
         
 
         cactusSpawnTime = p5.floor(p5.random(minSpawnTime, maxSpawnTime));
         // console.log('cactusSpanwTime :' + cactusSpawnTime);
       }
-      // console.log('cactuses: ' + cactuses.length);
+      // console.log('obstacles: ' + obstacles.length);
 
-      //Removing old cactuses
-      for(let i = 0; i < cactuses.length; i++) {
-        if(cactuses[i].isOffScreen()){
-          cactuses.splice(i, 1);
+      //Removing old obstacles
+      for(let i = 0; i < obstacles.length; i++) {
+        if(obstacles[i].isOffScreen()){
+          obstacles.splice(i, 1);
         }
       }
 
