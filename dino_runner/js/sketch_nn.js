@@ -240,8 +240,23 @@ const sketch = p5 => {
       //Spawn new obstacles
       obstacleSpawnTime--;
       if(obstacleSpawnTime === 0){
-        const rndSpriteIndex = p5.floor(p5.random(0, cactusFrames.length-1));
-        obstacles.push(new Obstacle(p5,{animationFrames:[cactusFrames[rndSpriteIndex]], groundLevel:500+10, velocity:obstacleSpeed}));
+        let obstacle;
+        if(spawnPteros) {
+          const rnd = p5.random();
+          if(rnd < 0.4) {
+            obstacle = new Obstacle(p5,{animationFrames:pteroFrames, groundLevel:500-60, velocity:obstacleSpeed});
+          }
+          else {
+            const rndSpriteIndex = p5.floor(p5.random(0, cactusFrames.length-1));
+            obstacle = new Obstacle(p5,{animationFrames:[cactusFrames[rndSpriteIndex]], groundLevel:500+10, velocity:obstacleSpeed});
+          }
+        }
+        else {
+          const rndSpriteIndex = p5.floor(p5.random(0, cactusFrames.length-1));
+          obstacle = new Obstacle(p5,{animationFrames:[cactusFrames[rndSpriteIndex]], groundLevel:500+10, velocity:obstacleSpeed});
+        }
+        
+        obstacles.push(obstacle);
         
 
         obstacleSpawnTime = p5.floor(p5.random(minSpawnTime, maxSpawnTime));
