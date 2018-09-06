@@ -128,22 +128,44 @@ class Dino {
     }
 
     __hasHitObstacle(obstacle) {
-        const dino_lx = this.x;
-        const dino_rx = this.x + this.hitBoxWidth;
-        const dino_y = this.y + this.hitBoxHeight;
+        // const dino_lx = this.x;
+        // // const dino_rx = this.x + this.hitBoxWidth;
+        // const dino_rx = this.x + this.hitBoxWidth + this.hitBoxHeight;
+        // // const dino_y = this.y + this.hitBoxHeight;
 
         const obstHitBox = obstacle.getHitBox();
-        const obs_lx = obstHitBox.x;
-        const obs_rx = obstHitBox.x + obstHitBox.width;
-        const obs_y = obstHitBox.y
+        // const obs_lx = obstHitBox.x;
+        // // const obs_rx = obstHitBox.x + obstHitBox.width;
+        // const obs_rx = obstHitBox.x + obstHitBox.width + obstHitBox.height;
+        // // const obs_y = obstHitBox.y
+
+        const dino_l = {
+            x: this.x,
+            y: this.y
+        };
+
+        const dino_r = {
+            x: this.x + this.hitBoxWidth,
+            y: this.y + this.hitBoxHeight
+        };
+
+        const obs_l = {
+            x: obstHitBox.x,
+            y: obstHitBox.y
+        };
+
+        const obs_r = {
+            x: obstHitBox.x + obstHitBox.width,
+            y: obstHitBox.y + obstHitBox.height
+        };
 
 
         //On rectangle is on left side of another
-        if(dino_lx > obs_rx || obs_lx > dino_rx) {
+        if(dino_l.x > obs_r.x || obs_l.x > dino_r.x) {
             return false;
         }
 
-        if(dino_y < obs_y) {
+        if(dino_l.y > obs_r.y || obs_l.y > dino_r.y ) {
             return false;
         }
 

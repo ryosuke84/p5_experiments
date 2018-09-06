@@ -244,7 +244,7 @@ const sketch = p5 => {
         if(spawnPteros) {
           const rnd = p5.random();
           if(rnd < 0.4) {
-            obstacle = new Obstacle(p5,{animationFrames:pteroFrames, groundLevel:500-60, velocity:obstacleSpeed});
+            obstacle = new Obstacle(p5,{animationFrames:pteroFrames, groundLevel:500-40, velocity:obstacleSpeed});
           }
           else {
             const rndSpriteIndex = p5.floor(p5.random(0, cactusFrames.length-1));
