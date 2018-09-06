@@ -12,9 +12,10 @@ const sketch = p5 => {
   let obstacles = [];
   let minSpawnTime;
   let maxSpawnTime;
-  let cactusSpawnTime;
-  let cactusSpeed;
-  let hiScore;
+  let obstacleSpawnTime;
+  let obstacleSpeed;
+  let counter
+  let spawnPteros = false;
 
  
   let spriteSheet;
@@ -111,14 +112,14 @@ const sketch = p5 => {
     // obstacles.push(new Cactus(p5, cactusSpriteSheet, 500));
     // console.log(cactusFrames)
     const rndSpriteIndex = p5.floor(p5.random(0, cactusFrames.length-1));
-    obstacles.push(new Obstacle(p5,{animationFrames:[cactusFrames[rndSpriteIndex]], groundLevel:500+10, velocity:cactusSpeed}));
-    // obstacles.push(new Obstacle(p5,{animationFrames:pteroFrames, groundLevel:500+10, velocity:cactusSpeed}));
+    obstacles.push(new Obstacle(p5,{animationFrames:[cactusFrames[rndSpriteIndex]], groundLevel:500+10, velocity:obstacleSpeed}));
+    // obstacles.push(new Obstacle(p5,{animationFrames:pteroFrames, groundLevel:500+10, velocity:obstacleSpeed}));
 
     minSpawnTime = 40;
     maxSpawnTime = 70;
-    cactusSpawnTime = 100;
-    cactusSpeed = 7;
-    hiScore = 0;
+    obstacleSpawnTime = 100;
+    obstacleSpeed = 7;
+    counter = 0;
   }
 
   p5.setup = () => {
@@ -237,14 +238,14 @@ const sketch = p5 => {
       }
 
       //Spawn new obstacles
-      cactusSpawnTime--;
-      if(cactusSpawnTime === 0){
+      obstacleSpawnTime--;
+      if(obstacleSpawnTime === 0){
         const rndSpriteIndex = p5.floor(p5.random(0, cactusFrames.length-1));
-        // obstacles.push(new Obstacle(p5,{animationFrames:[cactusFrames[rndSpriteIndex]], groundLevel:500+10, velocity:cactusSpeed}));
+        obstacles.push(new Obstacle(p5,{animationFrames:[cactusFrames[rndSpriteIndex]], groundLevel:500+10, velocity:obstacleSpeed}));
         
 
-        cactusSpawnTime = p5.floor(p5.random(minSpawnTime, maxSpawnTime));
-        // console.log('cactusSpanwTime :' + cactusSpawnTime);
+        obstacleSpawnTime = p5.floor(p5.random(minSpawnTime, maxSpawnTime));
+        // console.log('cactusSpanwTime :' + obstacleSpawnTime);
       }
       // console.log('obstacles: ' + obstacles.length);
 
@@ -255,18 +256,22 @@ const sketch = p5 => {
         }
       }
 
-      //Update Hi Score and Difficulty
+      //Update Counter and Difficulty
       if(p5.frameCount%5 === 0){
-        hiScore++;
+        counter++;
 
-        // console.log(hiScore)
-        if(hiScore%100 === 0) {
-          console.log('cactusSpeed: ' + cactusSpeed);
-          cactusSpeed += 0.5;
+        // console.log(counter)
+        if(counter%100 === 0) {
+          console.log('obstacleSpeed: ' + obstacleSpeed);
+          obstacleSpeed += 0.5;
           // minSpawnTime -= 5;
           // maxSpawnTime -= 5;
           // console.log('minSpawn: ' + minSpawnTime);
           // console.log('maxSpawn: ' + maxSpawnTime);
+        }
+
+        if(counter === 100) {
+          spawnPteros = true;
         }
       }
 
