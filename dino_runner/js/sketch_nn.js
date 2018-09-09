@@ -230,6 +230,7 @@ const sketch = p5 => {
     p5.text('Current Generation: ' + currentGeneration, 600, 50);
     p5.text('Average fitness: ' + averageFitness.toPrecision(5), 600, 80);
     p5.text('Best fitness: ' + bestFitness.toPrecision(5), 600, 110);
+    p5.text('Best last generation: ' + bestFitnessLastGen.toPrecision(5), 600, 140);
     p5.pop();
 
 
@@ -396,10 +397,14 @@ const sketch = p5 => {
     const totalScore = geration.reduce((sum, dino) => sum += dino.score, 0);
     const fitnesses = geration.map(dino => dino.score/totalScore);
     averageFitness = fitnesses.reduce((sum, e) => sum += e, 0)/fitnesses.length;
+    bestFitnessLastGen = 0;
     for(const fitness of fitnesses) {
       // console.log(fitness)
       if(fitness > bestFitness) {
         bestFitness = fitness;
+      }
+      if(fitness > bestFitnessLastGen){
+        bestFitnessLastGen = fitness;
       }
     }
   }
