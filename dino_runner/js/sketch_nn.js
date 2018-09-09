@@ -7,8 +7,9 @@ import spritesUrl from '../assets/sprites.png';
 const sketch = p5 => {
   let canvas;
 
-  const DINOS_POPULATION = 1;
+  const DINOS_POPULATION = 500;
   let dinos = [];
+  let deadDinos = [];
   let obstacles = [];
   let minSpawnTime;
   let maxSpawnTime;
@@ -16,6 +17,12 @@ const sketch = p5 => {
   let obstacleSpeed;
   let counter
   let spawnPteros = false;
+
+  //GA variables
+  let currentGeneration = 1;
+  let averageFitness = 0;
+  let bestFitness = 0;
+  let bestFitnessLastGen = 0;
 
  
   let spriteSheet;
@@ -101,13 +108,17 @@ const sketch = p5 => {
     spriteSheet = p5.loadImage(spritesUrl);
   };
 
-  const init = () => {
-    for(let i = 0; i < DINOS_POPULATION; i++){
-      // dinos.push(new Dino(p5, dinoSpriteSheet, 500));
-      dinos.push(new Dino(p5,{runningFrames:runningDinoFrames, duckingFrames: duckingDinoFrames, groundLevel: 500 +10 }));
+  const init = (dinoGen = []) => {
+
+    dinos = dinoGen;
+    if(dinos.length === 0) {
+      for(let i = 0; i < DINOS_POPULATION; i++){
+        // dinos.push(new Dino(p5, dinoSpriteSheet, 500));
+        dinos.push(new Dino(p5,{runningFrames:runningDinoFrames, duckingFrames: duckingDinoFrames, groundLevel: 500 +10 }));
+      }
     }
     
-
+    deadDinos =  [];
     obstacles = [];
     // obstacles.push(new Cactus(p5, cactusSpriteSheet, 500));
     // console.log(cactusFrames)
@@ -120,6 +131,7 @@ const sketch = p5 => {
     obstacleSpawnTime = 100;
     obstacleSpeed = 7;
     counter = 0;
+    spawnPteros = false;
   }
 
   p5.setup = () => {
@@ -200,7 +212,7 @@ const sketch = p5 => {
     p5.line(0,500, 900, 500);
     
     // ************************* RENDERING ****************//
-
+    
     //Render Dino
     for(let dino of dinos){
       dino.show();
@@ -212,20 +224,33 @@ const sketch = p5 => {
       obstacles[i].show();
     }
 
-    //Render Score
-    // p5.push();
-    // p5.textSize(20)
-    // p5.text('Hi Score: ' + dino.score, 600, 50);
-    // p5.pop();
+    //Render Data
+    p5.push();
+    p5.textSize(20)
+    p5.text('Current Generation: ' + currentGeneration, 600, 50);
+    p5.text('Average fitness: ' + averageFitness.toPrecision(5), 600, 80);
+    p5.text('Best fitness: ' + bestFitness.toPrecision(5), 600, 110);
+    p5.pop();
 
 
     // ************************* UPDATING ****************//
     // if(1) {
-    if(dinos.length > 0) {
+    if(dinos.length === 0) { // No more dinos left. Create a new batch
+
+      //Update stats
+      currentGeneration++;
+      calculateStats(deadDinos);
+
+      const newGen = createNextGeneration({oldGen: deadDinos, mutationRate: 0.05});
+      init(newGen)
+    }
+    else { //Continue simulation
+      // console.log(dinos[0].outputs)
       //Update dinos
       for(let i = dinos.length -1; i >= 0; i--) {
         if(!dinos[i].isAlive){
-          dinos.splice(i,1);
+         const removed =  dinos.splice(i,1);
+         deadDinos.push(removed[0]);
           continue;
         }
         dinos[i].run(obstacles);
@@ -315,6 +340,69 @@ const sketch = p5 => {
 
     return false;
   };
+
+
+
+
+
+  //Genetic algorithm functions
+  function createNextGeneration({oldGen, mutationRate}) {
+      const newGen = [];
+      const populationSize = oldGen.length;
+
+      //Calculating fitness
+      const totalScore = oldGen.reduce((sum, dino) => sum += dino.score, 0);
+      oldGen = oldGen.map(dino => {
+          dino.fitness = dino.score/totalScore;
+          return dino;
+      })
+
+      //Creating new generation
+      for(let i = 0; i < populationSize; i++){
+          const chosenOne = pickOne(oldGen);
+          const chosenBrain = chosenOne.brain.copy();
+          chosenBrain.mutate((value) => {
+              const min = -1;
+              const max = 1;
+              const rnd = Math.random();
+              if(rnd < mutationRate) {
+                  // console.log('mutate')
+                  return  Math.random() * (max - min) + min;
+              }
+
+              return value;
+          })
+
+          newGen.push(new Dino(p5,{runningFrames:runningDinoFrames, duckingFrames: duckingDinoFrames, groundLevel: 500 +10, brain: chosenBrain }))
+      }
+
+      return newGen;
+  }
+
+  function pickOne(elems) {
+      let index = 0;
+      let rnd = Math.random();
+      
+      while(rnd > 0 ) {
+          rnd -= elems[index].fitness;
+          index++;
+      }
+      index--;
+      console.log('picked with fitness: ' + elems[index].fitness);
+      return elems[index];
+  }
+
+  function calculateStats(geration) {
+    const totalScore = geration.reduce((sum, dino) => sum += dino.score, 0);
+    const fitnesses = geration.map(dino => dino.score/totalScore);
+    averageFitness = fitnesses.reduce((sum, e) => sum += e, 0)/fitnesses.length;
+    for(const fitness of fitnesses) {
+      // console.log(fitness)
+      if(fitness > bestFitness) {
+        bestFitness = fitness;
+      }
+    }
+  }
 
 };
 

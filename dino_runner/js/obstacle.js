@@ -20,6 +20,7 @@ class Obstacle {
         this.y = yPos;
 
         //Animation variables
+        this.mustShowHitBox = false;
         this.frames = animationFrames.map( obj => obj.frame );
         this.animationSpeed = 0.2;
         this.animationIndex = 0;
@@ -34,7 +35,8 @@ class Obstacle {
         p5.push();
 
         p5.noFill();
-        p5.stroke('red');
+        this.mustShowHitBox ? p5.stroke('red'): p5.noStroke();
+        // p5.stroke('red');
         p5.rect(this.x, this.y, this.hitBoxWidth, this.hitBoxHeight);
 
         let index = p5.floor(this.animationIndex)%this.frames.length;
@@ -68,6 +70,14 @@ class Obstacle {
             width: this.hitBoxWidth,
             height: this.hitBoxHeight
         };
+    }
+
+    showHitBox() {
+        this.mustShowHitBox = true;
+    }
+
+    hideHitBox() {
+        this.mustShowHitBox = false;
     }
 }
 

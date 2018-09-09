@@ -7,7 +7,7 @@ const STATE = {
 };
 
 class Dino {
-    constructor(p5, {runningFrames, duckingFrames, groundLevel}) {
+    constructor(p5, {runningFrames, duckingFrames, groundLevel, brain = null}) {
         this.p5 = p5;
         this.runningFrames = runningFrames;
         this.duckingFrames = duckingFrames
@@ -55,6 +55,8 @@ class Dino {
         this.state = STATE.RUNNING;
         this.isJumping =  false;
         this.isAlive = true;
+        this.arrow_down = false;
+        this.brainOuputs = [];
         this.score = 0;
         this.fitness = 0;
 
@@ -67,11 +69,13 @@ class Dino {
 
 
         //Dino Brain!!!!
-        this.brain = new NeuralNetwork({
-            in_nodes: 2,
-            hid_nodes: 4,
-            out_nodes:1
-        });
+        brain === null ? 
+            this.brain = new NeuralNetwork({
+                in_nodes: 8, // dino.x, dino.y, dino.width, dino.height, obstacle.x, obstacle.y, obstacle.width, obstacle.height
+                hid_nodes: 8,
+                out_nodes: 2 // jump, duck
+            }) :
+            this.brain = brain;
         // console.log(this.brain);
     }
 
@@ -122,7 +126,8 @@ class Dino {
     _checkNoInput() {
         const p5 =  this.p5;
         // console.log(p5.keyIsPressed)
-        if(this.y === this.bottomPos && !p5.keyIsDown(p5.DOWN_ARROW)){
+        // if(this.y === this.bottomPos && !p5.keyIsDown(p5.DOWN_ARROW)){
+        if(this.y === this.bottomPos && !this.arrow_down){
             this._walk();
         }
     }
@@ -190,21 +195,46 @@ class Dino {
         let closestD = Infinity;
         for(let i = 0; i < obstacles.length; i++) {
             const obstHitBox = obstacles[i].getHitBox();
-            const dist = obstHitBox.x - this.x
-            if( dist > 0 && dist < closestD) {
+            // const dist = obstHitBox.x - this.x;
+            const dist = (obstHitBox.x + obstHitBox.width) - this.x;
+            if( dist + obstHitBox.width >= 0 && dist < closestD) {
                closest = obstHitBox;
                closestD =  dist;
+               obstacles[i].showHitBox();
+            }
+            else {
+                obstacles[i].hideHitBox();
             }
         }
 
         let inputs = [
             this.x/p5.width,
-            closest.x/p5.width
+            this.y/p5.height,
+            this.hitBoxWidth/p5.width,
+            this.hitBoxHeight/p5.height,
+            closest.x/p5.width,
+            closest.y/p5.height,
+            closest.width/p5.width,
+            closest.height/p5.height
         ];
-        let outputs = this.brain.predict(inputs);
-        if(outputs[0] > 0.5) {
+        this.outputs = this.brain.predict(inputs);
+        if(this.outputs[0] > 0.5) {
+            this.arrow_down = false
             this.jump();
+            // console.log('jump: ' + outputs)
         }
+
+        else if(this.outputs[1] > 0.5) {
+            this.arrow_down = true;
+            this.duck();
+            // console.log('duck: ' + outputs)
+        }
+
+        else {
+            // console.log('walk: ' + outputs)
+            this.arrow_down = false;
+        }
+
         // console.log(outputs);
     }
 
@@ -246,7 +276,7 @@ class Dino {
     run(obstacles) {
         this._animate();
         this._applyGravity();
-        // this._think(obstacles);
+        this._think(obstacles);
         this._update();
         this._updateScore();
         this._checkBoundaries();
