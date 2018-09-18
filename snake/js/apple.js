@@ -19,7 +19,8 @@ class Apple {
     }
 
     getPosition() {
-        return this.position;
+        const p5 = this.p5;
+        return p5.createVector(this.position.x, this.position.y);
     }
 }
 

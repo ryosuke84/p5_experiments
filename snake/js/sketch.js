@@ -3,6 +3,7 @@ import 'p5/lib/addons/p5.dom';
 import Snake from './snake.js';
 import Apple from './apple.js';
 import Collider from './collider.js';
+import World from './world.js';
 
 
 const sketch = p5 => {
@@ -12,9 +13,12 @@ const sketch = p5 => {
   let apple = null;
   let rows = 30 // 600/20
   let cols = 45 // 900/20
+  let score = 0;
 
   const init = () => {
-    snake = new Snake(p5);
+    snake = new Snake(p5, {grid: {rows: rows, cols: cols}});
+    const newTile = World.findEmptyTile(p5, cols, rows, snake.getPositions());
+    apple = new Apple(p5, newTile.x, newTile.y, 20);
   }
 
   p5.preload = () => {
@@ -27,8 +31,6 @@ const sketch = p5 => {
     p5.background(255);
 
     init();
-
-    apple = new Apple(p5, 30,29, 20);
   };
 
   p5.draw = () => {
@@ -46,11 +48,19 @@ const sketch = p5 => {
     }
     p5.pop();
 
-
-    
+    //Updating game objects
     snake.update();
-    if (Collider.collides(snake, [apple])){
-      console.log('eat!')
+
+    //Check if snake eats the apple
+    if (World.collides(snake.getHeadPosition(), [apple.getPosition()])) {
+      const newTile = World.findEmptyTile(p5, cols, rows, snake.getPositions());
+      apple = new Apple(p5, newTile.x, newTile.y, 20);
+      snake.elongate();
+    }
+
+    //Check if the snake bites itself
+    if(World.collides(snake.getHeadPosition(), snake.getBodyPositions())) {
+      console.log('OUCHHHH!!!!!!')
     }
 
     snake.show();
