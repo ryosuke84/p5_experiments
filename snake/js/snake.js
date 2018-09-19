@@ -31,11 +31,11 @@ class Snake {
             // const nextPos = Vector.add(this.body[0], vel);
             const nextPos = Vector.add(this.body[0], this.velocity);
 
-            if(nextPos.x >= this.grid.cols) {
+            if(nextPos.x >= this.grid.cols ) {
               nextPos.x = 0;
             }
 
-            if(nextPos.x <= 0) {
+            if(nextPos.x < 0) {
               nextPos.x = this.grid.cols - 1;
             }
 
@@ -43,7 +43,7 @@ class Snake {
               nextPos.y = 0;
             }
 
-            if(nextPos.y <= 0) {
+            if(nextPos.y < 0) {
               nextPos.y = this.grid.rows - 1;
             }
             // console.log(nextPos)
@@ -52,10 +52,7 @@ class Snake {
             this.body.pop();
             this.body.unshift(head)
         }
-        
-        // this.body = [head]
-        // this.body.push(...trail)
-        // console.log(this.body);
+
     }
     
     show() {

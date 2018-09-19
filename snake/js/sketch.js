@@ -2,7 +2,6 @@ import p5 from 'p5';
 import 'p5/lib/addons/p5.dom';
 import Snake from './snake.js';
 import Apple from './apple.js';
-import Collider from './collider.js';
 import World from './world.js';
 
 
